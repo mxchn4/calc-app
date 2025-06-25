@@ -14,4 +14,4 @@ add_executable(calc_app_test test.cpp)
 target_link_libraries(calc_app_test GTest::gtest_main)
 
 # Add the tests to CTest
-gtest_discover_tests(my_cpp_project_test)
+gtest_discover_tests(calc_app_test)
