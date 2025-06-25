@@ -9,8 +9,8 @@ on:
       - main
 
 jobs:
-  build_and_test:
-    runs-on: ubuntu-latest # Or windows-latest, macos-latest
+  build:
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
@@ -19,7 +19,7 @@ jobs:
     - name: Set up CMake
       uses: jwlawson/actions-setup-cmake@v2
       with:
-        cmake-version: '3.20.0' # Specify a CMake version
+        cmake-version: '3.20.0'
 
     - name: Set up C++ Build Environment
       run: |
@@ -27,24 +27,51 @@ jobs:
         sudo apt-get install -y build-essential
 
     - name: Configure CMake
-      run: cmake -B build # Configure the project in a 'build' directory
+      run: cmake -B build
 
     - name: Build Project
-      run: cmake --build build --config Release # Build the project
+      run: cmake --build build --config Release
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: my-cpp-project-build
+        path: build/ # Upload the entire build directory
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build # This job depends on the 'build' job completing successfully
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download Build Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: my-cpp-project-build
+        path: build/ # Download artifacts to the 'build' directory
 
     - name: Run Tests
+      # The tests executable is within the downloaded build directory
       run: |
         cd build
-        ctest --output-on-failure # Run tests using CTest and show output on failure
+        ctest --output-on-failure
 
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test # This job depends on the 'test' job completing successfully
+    # You might want to add conditions here, e.g., if: github.ref == 'refs/heads/main'
+
+    steps:
     - name: Deploy (Placeholder)
-      # This step is a placeholder for your deployment logic.
-      # Deployment steps would vary greatly depending on your project type
-      # (e.g., publishing an executable, deploying to a server, creating a package).
       run: |
         echo "Deployment step would go here."
         echo "For example, you might copy build artifacts to a release directory,"
         echo "upload them to an artifact repository, or push to a deployment server."
-        ls -F build/src # Example: List compiled executable
-        # Example: if it's a Linux executable, it would be at build/src/my_cpp_project
+        echo "You would typically download specific artifacts for deployment, e.g., the executable."
+        # For demonstration, list contents of the 'build' directory if needed after downloading
+        # actions/download-artifact@v4 if needed specific files for deployment
+        # Example: if your main executable is at build/src/my_cpp_project
+        # ls -F build/src/
         # cp build/src/my_cpp_project /path/to/deployment/location
