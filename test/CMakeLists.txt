@@ -1,17 +1,19 @@
-# Find Google Test. Google Test will be downloaded if not found.
-find_package(GTest CONFIG REQUIRED)
-include(GoogleTest)
+# Include FetchContent to download Google Test
+include(FetchContent)
 
-# Add the source directory (to be able to include main.cpp functions if needed)
-# Note: For simple unit tests, you might just include the headers directly.
-# For this example, we'll expose the add function by including its definition in test.cpp
-# which is why we don't link src here.
+# Define Google Test content and fetch it
+FetchContent_Declare(
+  googletest
+  URL [https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip](https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip) # Use a specific release version
+  URL_HASH SHA256=11d7393437b0d9e89d87178a22129e9514f777174e92b3a0b5a6c1742467d93d
+)
+FetchContent_MakeAvailable(googletest)
 
 # Add unit test executable
-add_executable(calc_app_test test.cpp)
+add_executable(my_cpp_project_test test.cpp)
 
 # Link Google Test libraries to the test executable
-target_link_libraries(calc_app_test GTest::gtest_main)
+target_link_libraries(my_cpp_project_test GTest::gtest_main)
 
 # Add the tests to CTest
-gtest_discover_tests(calc_app_test)
+gtest_discover_tests(my_cpp_project_test)
