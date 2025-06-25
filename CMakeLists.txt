@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Project name
-project(MyCppProject VERSION 1.0.0 LANGUAGES CXX)
+project(CalcAppProject VERSION 1.0.0 LANGUAGES CXX)
 
 # Set C++ standard to C++17
 set(CMAKE_CXX_STANDARD 17)
